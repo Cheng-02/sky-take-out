@@ -1,5 +1,3 @@
-
-
 # 苍穹外卖-day03
 
 ## 课程内容
@@ -10,144 +8,133 @@
 - 删除菜品
 - 修改菜品
 
-
-
 **功能实现：**菜品管理
 
 **菜品管理效果图：**
 
 <img src="assets/image-20221121142133307.png" alt="image-20221121142133307" style="zoom:50%;" /> 
 
-
-
-
-
 ## 1. 公共字段自动填充
 
 ### 1.1 问题分析
 
-在上一章节我们已经完成了后台系统的**员工管理功能**和**菜品分类功能**的开发，在**新增员工**或者**新增菜品分类**时需要设置创建时间、创建人、修改时间、修改人等字段，在**编辑员工**或者**编辑菜品分类**时需要设置修改时间、修改人等字段。这些字段属于公共字段，也就是也就是在我们的系统中很多表中都会有这些字段，如下：
+在上一章节我们已经完成了后台系统的**员工管理功能**和**菜品分类功能**的开发，在**新增员工**或者**新增菜品分类**
+时需要设置创建时间、创建人、修改时间、修改人等字段，在**编辑员工**或者**编辑菜品分类**
+时需要设置修改时间、修改人等字段。这些字段属于公共字段，也就是也就是在我们的系统中很多表中都会有这些字段，如下：
 
-| **序号** | **字段名**  | **含义** | **数据类型** |
-| -------- | ----------- | -------- | ------------ |
-| 1        | create_time | 创建时间 | datetime     |
-| 2        | create_user | 创建人id | bigint       |
-| 3        | update_time | 修改时间 | datetime     |
-| 4        | update_user | 修改人id | bigint       |
+| **序号** | **字段名**     | **含义** | **数据类型** |
+|--------|-------------|--------|----------|
+| 1      | create_time | 创建时间   | datetime |
+| 2      | create_user | 创建人id  | bigint   |
+| 3      | update_time | 修改时间   | datetime |
+| 4      | update_user | 修改人id  | bigint   |
 
-而针对于这些字段，我们的赋值方式为： 
+而针对于这些字段，我们的赋值方式为：
 
 1). 在新增数据时, 将createTime、updateTime 设置为当前时间, createUser、updateUser设置为当前登录用户ID。
 
 2). 在更新数据时, 将updateTime 设置为当前时间, updateUser设置为当前登录用户ID。
-
-
 
 目前,在我们的项目中处理这些字段都是在每一个业务方法中进行赋值操作,如下:
 
 **新增员工方法：**
 
 ```java
-	/**
-     * 新增员工
-     *
-     * @param employeeDTO
-     */
-    public void save(EmployeeDTO employeeDTO) {
-        //.......................
-		//////////////////////////////////////////
-        //设置当前记录的创建时间和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+    /**
+ * 新增员工
+ *
+ * @param employeeDTO
+ */
+public void save(EmployeeDTO employeeDTO) {
+    //.......................
+    //////////////////////////////////////////
+    //设置当前记录的创建时间和修改时间
+    employee.setCreateTime(LocalDateTime.now());
+    employee.setUpdateTime(LocalDateTime.now());
 
-        //设置当前记录创建人id和修改人id
-        employee.setCreateUser(BaseContext.getCurrentId());//目前写个假数据，后期修改
-        employee.setUpdateUser(BaseContext.getCurrentId());
-		///////////////////////////////////////////////
-        employeeMapper.insert(employee);
-    }
+    //设置当前记录创建人id和修改人id
+    employee.setCreateUser(BaseContext.getCurrentId());//目前写个假数据，后期修改
+    employee.setUpdateUser(BaseContext.getCurrentId());
+    ///////////////////////////////////////////////
+    employeeMapper.insert(employee);
+}
 ```
 
 **编辑员工方法：**
 
 ```java
-	/**
-     * 编辑员工信息
-     *
-     * @param employeeDTO
-     */
-    public void update(EmployeeDTO employeeDTO) {
-       //........................................
-	   ///////////////////////////////////////////////
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());
-       ///////////////////////////////////////////////////
+    /**
+ * 编辑员工信息
+ *
+ * @param employeeDTO
+ */
+public void update(EmployeeDTO employeeDTO) {
+    //........................................
+    ///////////////////////////////////////////////
+    employee.setUpdateTime(LocalDateTime.now());
+    employee.setUpdateUser(BaseContext.getCurrentId());
+    ///////////////////////////////////////////////////
 
-        employeeMapper.update(employee);
-    }
+    employeeMapper.update(employee);
+}
 ```
 
 **新增菜品分类方法：**
 
 ```java
-	/**
-     * 新增分类
-     * @param categoryDTO
-     */
-    public void save(CategoryDTO categoryDTO) {
-       //....................................
-       //////////////////////////////////////////
-        //设置创建时间、修改时间、创建人、修改人
-        category.setCreateTime(LocalDateTime.now());
-        category.setUpdateTime(LocalDateTime.now());
-        category.setCreateUser(BaseContext.getCurrentId());
-        category.setUpdateUser(BaseContext.getCurrentId());
-        ///////////////////////////////////////////////////
+    /**
+ * 新增分类
+ * @param categoryDTO
+ */
+public void save(CategoryDTO categoryDTO) {
+    //....................................
+    //////////////////////////////////////////
+    //设置创建时间、修改时间、创建人、修改人
+    category.setCreateTime(LocalDateTime.now());
+    category.setUpdateTime(LocalDateTime.now());
+    category.setCreateUser(BaseContext.getCurrentId());
+    category.setUpdateUser(BaseContext.getCurrentId());
+    ///////////////////////////////////////////////////
 
-        categoryMapper.insert(category);
-    }
+    categoryMapper.insert(category);
+}
 ```
 
 **修改菜品分类方法：**
 
 ```java
-	/**
-     * 修改分类
-     * @param categoryDTO
-     */
-    public void update(CategoryDTO categoryDTO) {
-        //....................................
-        
-		//////////////////////////////////////////////
-        //设置修改时间、修改人
-        category.setUpdateTime(LocalDateTime.now());
-        category.setUpdateUser(BaseContext.getCurrentId());
-        //////////////////////////////////////////////////
+    /**
+ * 修改分类
+ * @param categoryDTO
+ */
+public void update(CategoryDTO categoryDTO) {
+    //....................................
 
-        categoryMapper.update(category);
-    }
+    //////////////////////////////////////////////
+    //设置修改时间、修改人
+    category.setUpdateTime(LocalDateTime.now());
+    category.setUpdateUser(BaseContext.getCurrentId());
+    //////////////////////////////////////////////////
+
+    categoryMapper.update(category);
+}
 ```
-
-
 
 如果都按照上述的操作方式来处理这些公共字段, 需要在每一个业务方法中进行操作, 编码相对冗余、繁琐，那能不能对于这些公共字段在某个地方统一处理，来简化开发呢？
 
 **答案是可以的，我们使用AOP切面编程，实现功能增强，来完成公共字段自动填充功能。**
 
-
-
 ### 1.2 实现思路
 
-在实现公共字段自动填充，也就是在插入或者更新的时候为指定字段赋予指定的值，使用它的好处就是可以统一对这些字段进行处理，避免了重复代码。在上述的问题分析中，我们提到有四个公共字段，需要在新增/更新中进行赋值操作, 具体情况如下: 
+在实现公共字段自动填充，也就是在插入或者更新的时候为指定字段赋予指定的值，使用它的好处就是可以统一对这些字段进行处理，避免了重复代码。在上述的问题分析中，我们提到有四个公共字段，需要在新增/更新中进行赋值操作,
+具体情况如下:
 
-| **序号** | **字段名**  | **含义** | **数据类型** | **操作类型**   |
-| -------- | ----------- | -------- | ------------ | -------------- |
-| 1        | create_time | 创建时间 | datetime     | insert         |
-| 2        | create_user | 创建人id | bigint       | insert         |
-| 3        | update_time | 修改时间 | datetime     | insert、update |
-| 4        | update_user | 修改人id | bigint       | insert、update |
-
-
+| **序号** | **字段名**     | **含义** | **数据类型** | **操作类型**      |
+|--------|-------------|--------|----------|---------------|
+| 1      | create_time | 创建时间   | datetime | insert        |
+| 2      | create_user | 创建人id  | bigint   | insert        |
+| 3      | update_time | 修改时间   | datetime | insert、update |
+| 4      | update_user | 修改人id  | bigint   | insert、update |
 
 **实现步骤：**
 
@@ -157,13 +144,9 @@
 
 3). 在 Mapper 的方法上加入 AutoFill 注解
 
-
-
 若要实现上述步骤，需掌握以下知识(之前课程内容都学过)
 
 **技术点：**枚举、注解、AOP、反射
-
-
 
 ### 1.3 代码开发
 
@@ -171,7 +154,7 @@
 
 #### 1.3.1 步骤一
 
-**自定义注解 AutoFill**              
+**自定义注解 AutoFill**
 
 进入到sky-server模块，创建com.sky.annotation包。
 
@@ -179,6 +162,7 @@
 package com.sky.annotation;
 
 import com.sky.enumeration.OperationType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -217,8 +201,6 @@ public enum OperationType {
 }
 ```
 
-
-
 #### 1.3.2 步骤二
 
 **自定义切面 AutoFillAspect**
@@ -240,13 +222,14 @@ public class AutoFillAspect {
      * 切入点
      */
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
-    public void autoFillPointCut(){}
+    public void autoFillPointCut() {
+    }
 
     /**
      * 前置通知，在通知中进行公共字段的赋值
      */
     @Before("autoFillPointCut()")
-    public void autoFill(JoinPoint joinPoint){
+    public void autoFill(JoinPoint joinPoint) {
         /////////////////////重要////////////////////////////////////
         //可先进行调试，是否能进入该方法 提前在mapper方法添加AutoFill注解
         log.info("开始进行公共字段自动填充...");
@@ -271,6 +254,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 
@@ -286,13 +270,14 @@ public class AutoFillAspect {
      * 切入点
      */
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
-    public void autoFillPointCut(){}
+    public void autoFillPointCut() {
+    }
 
     /**
      * 前置通知，在通知中进行公共字段的赋值
      */
     @Before("autoFillPointCut()")
-    public void autoFill(JoinPoint joinPoint){
+    public void autoFill(JoinPoint joinPoint) {
         log.info("开始进行公共字段自动填充...");
 
         //获取到当前被拦截的方法上的数据库操作类型
@@ -302,7 +287,7 @@ public class AutoFillAspect {
 
         //获取到当前被拦截的方法的参数--实体对象
         Object[] args = joinPoint.getArgs();
-        if(args == null || args.length == 0){
+        if (args == null || args.length == 0) {
             return;
         }
 
@@ -313,7 +298,7 @@ public class AutoFillAspect {
         Long currentId = BaseContext.getCurrentId();
 
         //根据当前不同的操作类型，为对应的属性通过反射来赋值
-        if(operationType == OperationType.INSERT){
+        if (operationType == OperationType.INSERT) {
             //为4个公共字段赋值
             try {
                 Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
@@ -322,22 +307,22 @@ public class AutoFillAspect {
                 Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
                 //通过反射为对象属性赋值
-                setCreateTime.invoke(entity,now);
-                setCreateUser.invoke(entity,currentId);
-                setUpdateTime.invoke(entity,now);
-                setUpdateUser.invoke(entity,currentId);
+                setCreateTime.invoke(entity, now);
+                setCreateUser.invoke(entity, currentId);
+                setUpdateTime.invoke(entity, now);
+                setUpdateUser.invoke(entity, currentId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else if(operationType == OperationType.UPDATE){
+        } else if (operationType == OperationType.UPDATE) {
             //为2个公共字段赋值
             try {
                 Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
                 Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
                 //通过反射为对象属性赋值
-                setUpdateTime.invoke(entity,now);
-                setUpdateUser.invoke(entity,currentId);
+                setUpdateTime.invoke(entity, now);
+                setUpdateUser.invoke(entity, currentId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -345,8 +330,6 @@ public class AutoFillAspect {
     }
 }
 ```
-
-
 
 #### 1.3.3 步骤三
 
@@ -368,6 +351,7 @@ public interface CategoryMapper {
             " (#{type}, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})")
     @AutoFill(value = OperationType.INSERT)
     void insert(Category category);
+
     /**
      * 根据id修改分类
      * @param category
@@ -383,8 +367,6 @@ public interface CategoryMapper {
 1). 将员工管理的新增和编辑方法中的公共字段赋值的代码注释。
 
 2). 将菜品分类管理的新增和修改方法中的公共字段赋值的代码注释。
-
-
 
 ### 1.4 功能测试
 
@@ -410,8 +392,6 @@ category表中数据
 
 由于使用admin(id=1)用户登录进行菜品添加操作,故create_user,update_user都为1.
 
-
-
 ### 1.5 代码提交
 
 **点击提交：**
@@ -434,8 +414,6 @@ category表中数据
 
 <img src="assets/image-20221121160037460.png" alt="image-20221121160037460" style="zoom: 67%;" /> 
 
-
-
 ## 2. 新增菜品
 
 ### 2.1 需求分析与设计
@@ -450,16 +428,12 @@ category表中数据
 
 当填写完表单信息, 点击"保存"按钮后, 会提交该表单的数据到服务端, 在服务端中需要接受数据, 然后将数据保存至数据库中。
 
-
-
 **业务规则：**
 
 - 菜品名称必须是唯一的
 - 菜品必须属于某个分类下，不能单独存在
 - 新增菜品时可以根据情况选择菜品的口味
 - 每个菜品必须对应一张图片
-
-
 
 #### 2.1.2 接口设计
 
@@ -471,8 +445,6 @@ category表中数据
 - 文件上传
 - 新增菜品
 
-
-
 接下来**细粒度**分析每个接口，明确每个接口的请求方式、请求路径、传入参数和返回值。
 
 **1. 根据类型查询分类**
@@ -483,13 +455,9 @@ category表中数据
 
 <img src="assets/image-20221121165201319.png" alt="image-20221121165201319" style="zoom:50%;" /><img src="assets/image-20221121165215634.png" alt="image-20221121165215634" style="zoom:50%;" />
 
-
-
 **3. 新增菜品**
 
 <img src="assets/image-20221121165254961.png" alt="image-20221121165254961" style="zoom: 50%;" /><img src="assets/image-20221121165308394.png" alt="image-20221121165308394" style="zoom: 50%;" /><img src="assets/image-20221121165322687.png" alt="image-20221121165322687" style="zoom: 50%;" />
-
-
 
 #### 2.1.3 表设计
 
@@ -499,39 +467,35 @@ category表中数据
 
 新增菜品，其实就是将新增页面录入的菜品信息插入到dish表，如果添加了口味做法，还需要向dish_flavor表插入数据。所以在新增菜品时，涉及到两个表：
 
-| 表名        | 说明       |
-| ----------- | ---------- |
-| dish        | 菜品表     |
+| 表名          | 说明    |
+|-------------|-------|
+| dish        | 菜品表   |
 | dish_flavor | 菜品口味表 |
-
-
 
 **1). 菜品表:dish**
 
-| **字段名**  | **数据类型**  | **说明**     | **备注**    |
-| ----------- | ------------- | ------------ | ----------- |
-| id          | bigint        | 主键         | 自增        |
-| name        | varchar(32)   | 菜品名称     | 唯一        |
-| category_id | bigint        | 分类id       | 逻辑外键    |
-| price       | decimal(10,2) | 菜品价格     |             |
-| image       | varchar(255)  | 图片路径     |             |
-| description | varchar(255)  | 菜品描述     |             |
-| status      | int           | 售卖状态     | 1起售 0停售 |
-| create_time | datetime      | 创建时间     |             |
-| update_time | datetime      | 最后修改时间 |             |
-| create_user | bigint        | 创建人id     |             |
-| update_user | bigint        | 最后修改人id |             |
+| **字段名**     | **数据类型**      | **说明**  | **备注**  |
+|-------------|---------------|---------|---------|
+| id          | bigint        | 主键      | 自增      |
+| name        | varchar(32)   | 菜品名称    | 唯一      |
+| category_id | bigint        | 分类id    | 逻辑外键    |
+| price       | decimal(10,2) | 菜品价格    |         |
+| image       | varchar(255)  | 图片路径    |         |
+| description | varchar(255)  | 菜品描述    |         |
+| status      | int           | 售卖状态    | 1起售 0停售 |
+| create_time | datetime      | 创建时间    |         |
+| update_time | datetime      | 最后修改时间  |         |
+| create_user | bigint        | 创建人id   |         |
+| update_user | bigint        | 最后修改人id |         |
 
 **2). 菜品口味表:dish_flavor**
 
-| **字段名** | **数据类型** | **说明** | **备注** |
-| ---------- | ------------ | -------- | -------- |
-| id         | bigint       | 主键     | 自增     |
-| dish_id    | bigint       | 菜品id   | 逻辑外键 |
-| name       | varchar(32)  | 口味名称 |          |
-| value      | varchar(255) | 口味值   |          |
-
-
+| **字段名** | **数据类型**     | **说明** | **备注** |
+|---------|--------------|--------|--------|
+| id      | bigint       | 主键     | 自增     |
+| dish_id | bigint       | 菜品id   | 逻辑外键   |
+| name    | varchar(32)  | 口味名称   |        |
+| value   | varchar(255) | 口味值    |        |
 
 ### 2.2 代码开发
 
@@ -544,14 +508,14 @@ category表中数据
 实现文件上传服务，需要有存储的支持，那么我们的解决方案将以下几种：
 
 1. 直接将图片保存到服务的硬盘（springmvc中的文件上传）
-   1. 优点：开发便捷，成本低
-   2. 缺点：扩容困难
+    1. 优点：开发便捷，成本低
+    2. 缺点：扩容困难
 2. 使用分布式文件系统进行存储
-   1. 优点：容易实现扩容
-   2. 缺点：开发复杂度稍大（有成熟的产品可以使用，比如：FastDFS,MinIO）
+    1. 优点：容易实现扩容
+    2. 缺点：开发复杂度稍大（有成熟的产品可以使用，比如：FastDFS,MinIO）
 3. 使用第三方的存储服务（例如OSS）
-   1. 优点：开发简单，拥有强大功能，免维护
-   2. 缺点：付费
+    1. 优点：开发简单，拥有强大功能，免维护
+    2. 缺点：付费
 
 在本项目选用阿里云的OSS服务进行文件存储。（前面课程已学习过阿里云OSS,不再赘述）
 
@@ -589,8 +553,6 @@ sky:
 
 ```
 
-
-
 **2). 读取OSS配置**
 
 在sky-common模块中，已定义
@@ -615,8 +577,6 @@ public class AliOssProperties {
 }
 ```
 
-
-
 **3). 生成OSS工具类对象**
 
 在sky-server模块
@@ -640,8 +600,8 @@ public class OssConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AliOssUtil aliOssUtil(AliOssProperties aliOssProperties){
-        log.info("开始创建阿里云文件上传工具类对象：{}",aliOssProperties);
+    public AliOssUtil aliOssUtil(AliOssProperties aliOssProperties) {
+        log.info("开始创建阿里云文件上传工具类对象：{}", aliOssProperties);
         return new AliOssUtil(aliOssProperties.getEndpoint(),
                 aliOssProperties.getAccessKeyId(),
                 aliOssProperties.getAccessKeySecret(),
@@ -662,6 +622,7 @@ import com.aliyun.oss.OSSException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 
 @Data
@@ -723,8 +684,6 @@ public class AliOssUtil {
 }
 ```
 
-
-
 **4). 定义文件上传接口**
 
 在sky-server模块中定义接口
@@ -743,6 +702,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -765,8 +725,8 @@ public class CommonController {
      */
     @PostMapping("/upload")
     @ApiOperation("文件上传")
-    public Result<String> upload(MultipartFile file){
-        log.info("文件上传：{}",file);
+    public Result<String> upload(MultipartFile file) {
+        log.info("文件上传：{}", file);
 
         try {
             //原始文件名
@@ -788,8 +748,6 @@ public class CommonController {
 }
 ```
 
-
-
 #### 2.2.2 新增菜品实现
 
 **1). 设计DTO类**
@@ -801,6 +759,7 @@ package com.sky.dto;
 
 import com.sky.entity.DishFlavor;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -827,8 +786,6 @@ public class DishDTO implements Serializable {
 }
 ```
 
-
-
 **2). Controller层**
 
 进入到sky-server模块
@@ -848,6 +805,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Set;
 
@@ -879,8 +837,6 @@ public class DishController {
 }
 ```
 
-
-
 **3). Service层接口**
 
 ```java
@@ -900,8 +856,6 @@ public interface DishService {
 
 }
 ```
-
-
 
 **4). Service层实现类**
 
@@ -948,20 +902,18 @@ public class DishServiceImpl implements DishService {
 }
 ```
 
-
-
 **5). Mapper层**
 
 DishMapper.java中添加
 
 ```java
-	/**
-     * 插入菜品数据
-     *
-     * @param dish
-     */
-    @AutoFill(value = OperationType.INSERT)
-    void insert(Dish dish);
+    /**
+ * 插入菜品数据
+ *
+ * @param dish
+ */
+@AutoFill(value = OperationType.INSERT)
+void insert(Dish dish);
 ```
 
 在/resources/mapper中创建DishMapper.xml
@@ -973,8 +925,10 @@ DishMapper.java中添加
 <mapper namespace="com.sky.mapper.DishMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into dish (name, category_id, price, image, description, create_time, update_time, create_user,update_user, status)
-        values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}, #{status})
+        insert into dish (name, category_id, price, image, description, create_time, update_time,
+        create_user,update_user, status)
+        values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{createTime}, #{updateTime}, #{createUser},
+        #{updateUser}, #{status})
     </insert>
 </mapper>
 
@@ -986,6 +940,7 @@ DishFlavorMapper.java
 package com.sky.mapper;
 
 import com.sky.entity.DishFlavor;
+
 import java.util.List;
 
 @Mapper
@@ -1015,8 +970,6 @@ public interface DishFlavorMapper {
 </mapper>
 ```
 
-
-
 ### 2.3 功能测试
 
 进入到菜品管理--->新建菜品
@@ -1035,15 +988,11 @@ dish_flavor表：
 
 测试成功。
 
-
-
 ### 2.4代码提交
 
 <img src="assets/image-20221121200332933.png" alt="image-20221121200332933" style="zoom:50%;" />  
 
 后续步骤和上述功能代码提交一致，不再赘述。
-
-
 
 ## 3. 菜品分页查询
 
@@ -1057,7 +1006,8 @@ dish_flavor表：
 
 <img src="assets/image-20221121201552489.png" alt="image-20221121201552489" style="zoom: 67%;" /> 
 
-在菜品列表展示时，除了菜品的基本信息(名称、售价、售卖状态、最后操作时间)外，还有两个字段略微特殊，第一个是图片字段 ，我们从数据库查询出来的仅仅是图片的名字，图片要想在表格中回显展示出来，就需要下载这个图片。第二个是菜品分类，这里展示的是分类名称，而不是分类ID，此时我们就需要根据菜品的分类ID，去分类表中查询分类信息，然后在页面展示。
+在菜品列表展示时，除了菜品的基本信息(名称、售价、售卖状态、最后操作时间)外，还有两个字段略微特殊，第一个是图片字段
+，我们从数据库查询出来的仅仅是图片的名字，图片要想在表格中回显展示出来，就需要下载这个图片。第二个是菜品分类，这里展示的是分类名称，而不是分类ID，此时我们就需要根据菜品的分类ID，去分类表中查询分类信息，然后在页面展示。
 
 **业务规则：**
 
@@ -1065,15 +1015,11 @@ dish_flavor表：
 - 每页展示10条数据
 - 分页查询时可以根据需要输入菜品名称、菜品分类、菜品状态进行查询
 
-
-
 #### 3.1.2 接口设计
 
 根据上述原型图，设计出相应的接口。
 
 <img src="assets/image-20221121202019258.png" alt="image-20221121202019258" style="zoom:50%;" /> <img src="assets/image-20221121202033284.png" alt="image-20221121202033284" style="zoom:50%;" />
-
-
 
 ### 3.2 代码开发
 
@@ -1087,6 +1033,7 @@ dish_flavor表：
 package com.sky.dto;
 
 import lombok.Data;
+
 import java.io.Serializable;
 
 @Data
@@ -1100,8 +1047,6 @@ public class DishPageQueryDTO implements Serializable {
 
 }
 ```
-
-
 
 #### 3.2.2 设计VO类
 
@@ -1117,6 +1062,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -1151,101 +1097,92 @@ public class DishVO implements Serializable {
 }
 ```
 
-
-
 #### 3.2.3 Controller层
 
 **根据接口定义创建DishController的page分页查询方法：**
 
 ```java
-	/**
-     * 菜品分页查询
-     *
-     * @param dishPageQueryDTO
-     * @return
-     */
-    @GetMapping("/page")
-    @ApiOperation("菜品分页查询")
-    public Result<PageResult> page(DishPageQueryDTO dishPageQueryDTO) {
-        log.info("菜品分页查询:{}", dishPageQueryDTO);
-        PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);//后绪步骤定义
-        return Result.success(pageResult);
-    }
+    /**
+ * 菜品分页查询
+ *
+ * @param dishPageQueryDTO
+ * @return
+ */
+@GetMapping("/page")
+@ApiOperation("菜品分页查询")
+public Result<PageResult> page(DishPageQueryDTO dishPageQueryDTO) {
+    log.info("菜品分页查询:{}", dishPageQueryDTO);
+    PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);//后绪步骤定义
+    return Result.success(pageResult);
+}
 ```
-
-
 
 #### 3.2.4 Service层接口
 
 **在 DishService 中扩展分页查询方法：**
 
 ```java
-	/**
-     * 菜品分页查询
-     *
-     * @param dishPageQueryDTO
-     * @return
-     */
-    PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+    /**
+ * 菜品分页查询
+ *
+ * @param dishPageQueryDTO
+ * @return
+ */
+PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
 ```
-
-
 
 #### 3.2.5 Service层实现类
 
 **在 DishServiceImpl 中实现分页查询方法：**
 
 ```java
-	/**
-     * 菜品分页查询
-     *
-     * @param dishPageQueryDTO
-     * @return
-     */
-    public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
-        PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
-        Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);//后绪步骤实现
-        return new PageResult(page.getTotal(), page.getResult());
-    }
+    /**
+ * 菜品分页查询
+ *
+ * @param dishPageQueryDTO
+ * @return
+ */
+public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
+    PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
+    Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);//后绪步骤实现
+    return new PageResult(page.getTotal(), page.getResult());
+}
 ```
-
-
 
 #### 3.2.6 Mapper层
 
 **在 DishMapper 接口中声明 pageQuery 方法：**
 
 ```java
-	/**
-     * 菜品分页查询
-     *
-     * @param dishPageQueryDTO
-     * @return
-     */
-    Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+    /**
+ * 菜品分页查询
+ *
+ * @param dishPageQueryDTO
+ * @return
+ */
+Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 ```
 
 **在 DishMapper.xml 中编写SQL：**
 
 ```xml
+
 <select id="pageQuery" resultType="com.sky.vo.DishVO">
-        select d.* , c.name as categoryName from dish d left outer join category c on d.category_id = c.id
-        <where>
-            <if test="name != null">
-                and d.name like concat('%',#{name},'%')
-            </if>
-            <if test="categoryId != null">
-                and d.category_id = #{categoryId}
-            </if>
-            <if test="status != null">
-                and d.status = #{status}
-            </if>
-        </where>
-        order by d.create_time desc
+    select d.* , c.name as categoryName from dish d left outer join category c on d.category_id = c.id
+    <where>
+        <if test="name != null">
+            and d.name like concat('%',#{name},'%')
+        </if>
+        <if test="categoryId != null">
+            and d.category_id = #{categoryId}
+        </if>
+        <if test="status != null">
+            and d.status = #{status}
+        </if>
+    </where>
+    order by d.create_time desc
 </select>
 ```
-
-
 
 ### 3.3 功能测试
 
@@ -1261,8 +1198,6 @@ public class DishVO implements Serializable {
 
 <img src="assets/image-20221121210333489.png" alt="image-20221121210333489" style="zoom: 67%;" /> 
 
-
-
 #### 3.3.2 前后端联调测试
 
 启动nginx,访问 http://localhost
@@ -1272,8 +1207,6 @@ public class DishVO implements Serializable {
 <img src="assets/image-20221121210500188.png" alt="image-20221121210500188" style="zoom:50%;" /> 
 
 数据成功查出。
-
-
 
 ## 4. 删除菜品
 
@@ -1296,8 +1229,6 @@ public class DishVO implements Serializable {
 - 被套餐关联的菜品不能删除
 - 删除菜品后，关联的口味数据也需要删除掉
 
-
-
 #### 4.1.2 接口设计
 
 根据上述原型图，设计出相应的接口。
@@ -1305,8 +1236,6 @@ public class DishVO implements Serializable {
 <img src="assets/image-20221121211801121.png" alt="image-20221121211801121" style="zoom:50%;" /> <img src="assets/image-20221121211814429.png" alt="image-20221121211814429" style="zoom:50%;" />
 
 **注意：**删除一个菜品和批量删除菜品共用一个接口，故ids可包含多个菜品id,之间用逗号分隔。
-
-
 
 #### 4.1.3 表设计
 
@@ -1321,8 +1250,6 @@ public class DishVO implements Serializable {
 - 若删除的菜品数据关联着某个套餐，此时，删除失败。
 - 若要删除套餐关联的菜品数据，先解除两者关联，再对菜品进行删除。
 
-
-
 ### 4.2 代码开发
 
 #### 4.1.2 Controller层
@@ -1330,92 +1257,88 @@ public class DishVO implements Serializable {
 **根据删除菜品的接口定义在DishController中创建方法：**
 
 ```java
-	/**
-     * 菜品批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @DeleteMapping
-    @ApiOperation("菜品批量删除")
-    public Result delete(@RequestParam List<Long> ids) {
-        log.info("菜品批量删除：{}", ids);
-        dishService.deleteBatch(ids);//后绪步骤实现
-        return Result.success();
-    }
+    /**
+ * 菜品批量删除
+ *
+ * @param ids
+ * @return
+ */
+@DeleteMapping
+@ApiOperation("菜品批量删除")
+public Result delete(@RequestParam List<Long> ids) {
+    log.info("菜品批量删除：{}", ids);
+    dishService.deleteBatch(ids);//后绪步骤实现
+    return Result.success();
+}
 ```
-
-
 
 #### 4.2.2 Service层接口
 
 **在DishService接口中声明deleteBatch方法：**
 
 ```java
-	/**
-     * 菜品批量删除
-     *
-     * @param ids
-     */
-    void deleteBatch(List<Long> ids);
+    /**
+ * 菜品批量删除
+ *
+ * @param ids
+ */
+void deleteBatch(List<Long> ids);
 ```
-
-
 
 #### 4.2.3 Service层实现类
 
 **在DishServiceImpl中实现deleteBatch方法：**
 
 ```java
-    @Autowired
-    private SetmealDishMapper setmealDishMapper;
-	/**
-     * 菜品批量删除
-     *
-     * @param ids
-     */
-    @Transactional//事务
-    public void deleteBatch(List<Long> ids) {
-        //判断当前菜品是否能够删除---是否存在起售中的菜品？？
-        for (Long id : ids) {
-            Dish dish = dishMapper.getById(id);//后绪步骤实现
-            if (dish.getStatus() == StatusConstant.ENABLE) {
-                //当前菜品处于起售中，不能删除
-                throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
-            }
-        }
 
-        //判断当前菜品是否能够删除---是否被套餐关联了？？
-        List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
-        if (setmealIds != null && setmealIds.size() > 0) {
-            //当前菜品被套餐关联了，不能删除
-            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
-        }
+@Autowired
+private SetmealDishMapper setmealDishMapper;
 
-        //删除菜品表中的菜品数据
-        for (Long id : ids) {
-            dishMapper.deleteById(id);//后绪步骤实现
-            //删除菜品关联的口味数据
-            dishFlavorMapper.deleteByDishId(id);//后绪步骤实现
+/**
+ * 菜品批量删除
+ *
+ * @param ids
+ */
+@Transactional//事务
+public void deleteBatch(List<Long> ids) {
+    //判断当前菜品是否能够删除---是否存在起售中的菜品？？
+    for (Long id : ids) {
+        Dish dish = dishMapper.getById(id);//后绪步骤实现
+        if (dish.getStatus() == StatusConstant.ENABLE) {
+            //当前菜品处于起售中，不能删除
+            throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
         }
     }
+
+    //判断当前菜品是否能够删除---是否被套餐关联了？？
+    List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
+    if (setmealIds != null && setmealIds.size() > 0) {
+        //当前菜品被套餐关联了，不能删除
+        throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+    }
+
+    //删除菜品表中的菜品数据
+    for (Long id : ids) {
+        dishMapper.deleteById(id);//后绪步骤实现
+        //删除菜品关联的口味数据
+        dishFlavorMapper.deleteByDishId(id);//后绪步骤实现
+    }
+}
 ```
-
-
 
 #### 4.2.4 Mapper层
 
 **在DishMapper中声明getById方法，并配置SQL：**
 
 ```java
-	/**
-     * 根据主键查询菜品
-     *
-     * @param id
-     * @return
-     */
-    @Select("select * from dish where id = #{id}")
-    Dish getById(Long id);
+    /**
+ * 根据主键查询菜品
+ *
+ * @param id
+ * @return
+ */
+@Select("select * from dish where id = #{id}")
+Dish getById(Long id);
 ```
 
 **创建SetmealDishMapper，声明getSetmealIdsByDishIds方法，并在xml文件中编写SQL：**
@@ -1426,6 +1349,7 @@ package com.sky.mapper;
 import com.sky.entity.SetmealDish;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+
 import java.util.List;
 
 @Mapper
@@ -1461,27 +1385,25 @@ SetmealDishMapper.xml
 **在DishMapper.java中声明deleteById方法并配置SQL：**
 
 ```java
-	/**
-     * 根据主键删除菜品数据
-     *
-     * @param id
-     */
-    @Delete("delete from dish where id = #{id}")
-    void deleteById(Long id);
+    /**
+ * 根据主键删除菜品数据
+ *
+ * @param id
+ */
+@Delete("delete from dish where id = #{id}")
+void deleteById(Long id);
 ```
 
 **在DishFlavorMapper中声明deleteByDishId方法并配置SQL：**
 
 ```java
     /**
-     * 根据菜品id删除对应的口味数据
-     * @param dishId
-     */
-    @Delete("delete from dish_flavor where dish_id = #{dishId}")
-    void deleteByDishId(Long dishId);
+ * 根据菜品id删除对应的口味数据
+ * @param dishId
+ */
+@Delete("delete from dish_flavor where dish_id = #{dishId}")
+void deleteByDishId(Long dishId);
 ```
-
-
 
 ### 4.3 功能测试
 
@@ -1496,8 +1418,6 @@ SetmealDishMapper.xml
 <img src="assets/image-20221122125625014.png" alt="image-20221122125625014" style="zoom:50%;" /> 
 
 同时，进到dish表和dish_flavor两个表查看**测试菜品**的相关数据都已被成功删除。
-
-
 
 再次，删除状态为启售的菜品
 
@@ -1515,8 +1435,6 @@ SetmealDishMapper.xml
 
 后续步骤和上述功能代码提交一致，不再赘述。
 
-
-
 ## 5. 修改菜品
 
 ### 5.1 需求分析和设计
@@ -1528,8 +1446,6 @@ SetmealDishMapper.xml
 **修改菜品原型：**
 
 <img src="assets/image-20221122130837173.png" alt="image-20221122130837173" style="zoom:50%;" /> 
-
-
 
 #### 5.1.2 接口设计
 
@@ -1558,8 +1474,6 @@ SetmealDishMapper.xml
 
 **注:因为是修改功能，请求方式可设置为PUT。**
 
-
-
 ### 5.2 代码开发
 
 #### 5.2.1 根据id查询菜品实现
@@ -1570,66 +1484,60 @@ SetmealDishMapper.xml
 
 ```java
     /**
-     * 根据id查询菜品
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    @ApiOperation("根据id查询菜品")
-    public Result<DishVO> getById(@PathVariable Long id) {
-        log.info("根据id查询菜品：{}", id);
-        DishVO dishVO = dishService.getByIdWithFlavor(id);//后绪步骤实现
-        return Result.success(dishVO);
-    }
+ * 根据id查询菜品
+ *
+ * @param id
+ * @return
+ */
+@GetMapping("/{id}")
+@ApiOperation("根据id查询菜品")
+public Result<DishVO> getById(@PathVariable Long id) {
+    log.info("根据id查询菜品：{}", id);
+    DishVO dishVO = dishService.getByIdWithFlavor(id);//后绪步骤实现
+    return Result.success(dishVO);
+}
 ```
-
-
 
 **2). Service层接口**
 
 **在DishService接口中声明getByIdWithFlavor方法：**
 
 ```java
-	/**
-     * 根据id查询菜品和对应的口味数据
-     *
-     * @param id
-     * @return
-     */
-    DishVO getByIdWithFlavor(Long id);
+    /**
+ * 根据id查询菜品和对应的口味数据
+ *
+ * @param id
+ * @return
+ */
+DishVO getByIdWithFlavor(Long id);
 ```
-
-
 
 **3). Service层实现类**
 
 **在DishServiceImpl中实现getByIdWithFlavor方法：**
 
 ```java
-	/**
-     * 根据id查询菜品和对应的口味数据
-     *
-     * @param id
-     * @return
-     */
-    public DishVO getByIdWithFlavor(Long id) {
-        //根据id查询菜品数据
-        Dish dish = dishMapper.getById(id);
+    /**
+ * 根据id查询菜品和对应的口味数据
+ *
+ * @param id
+ * @return
+ */
+public DishVO getByIdWithFlavor(Long id) {
+    //根据id查询菜品数据
+    Dish dish = dishMapper.getById(id);
 
-        //根据菜品id查询口味数据
-        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);//后绪步骤实现
+    //根据菜品id查询口味数据
+    List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);//后绪步骤实现
 
-        //将查询到的数据封装到VO
-        DishVO dishVO = new DishVO();
-        BeanUtils.copyProperties(dish, dishVO);
-        dishVO.setFlavors(dishFlavors);
+    //将查询到的数据封装到VO
+    DishVO dishVO = new DishVO();
+    BeanUtils.copyProperties(dish, dishVO);
+    dishVO.setFlavors(dishFlavors);
 
-        return dishVO;
-    }
+    return dishVO;
+}
 ```
-
-
 
 **4). Mapper层**
 
@@ -1637,15 +1545,13 @@ SetmealDishMapper.xml
 
 ```java
     /**
-     * 根据菜品id查询对应的口味数据
-     * @param dishId
-     * @return
-     */
-    @Select("select * from dish_flavor where dish_id = #{dishId}")
-    List<DishFlavor> getByDishId(Long dishId);
+ * 根据菜品id查询对应的口味数据
+ * @param dishId
+ * @return
+ */
+@Select("select * from dish_flavor where dish_id = #{dishId}")
+List<DishFlavor> getByDishId(Long dishId);
 ```
-
-
 
 #### 5.2.1 修改菜品实现
 
@@ -1654,106 +1560,99 @@ SetmealDishMapper.xml
 **根据修改菜品的接口定义在DishController中创建方法：**
 
 ```java
-	/**
-     * 修改菜品
-     *
-     * @param dishDTO
-     * @return
-     */
-    @PutMapping
-    @ApiOperation("修改菜品")
-    public Result update(@RequestBody DishDTO dishDTO) {
-        log.info("修改菜品：{}", dishDTO);
-        dishService.updateWithFlavor(dishDTO);
-        return Result.success();
-    }
+    /**
+ * 修改菜品
+ *
+ * @param dishDTO
+ * @return
+ */
+@PutMapping
+@ApiOperation("修改菜品")
+public Result update(@RequestBody DishDTO dishDTO) {
+    log.info("修改菜品：{}", dishDTO);
+    dishService.updateWithFlavor(dishDTO);
+    return Result.success();
+}
 ```
-
-
 
 **2). Service层接口**
 
 **在DishService接口中声明updateWithFlavor方法：**
 
 ```java
-	/**
-     * 根据id修改菜品基本信息和对应的口味信息
-     *
-     * @param dishDTO
-     */
-    void updateWithFlavor(DishDTO dishDTO);
+    /**
+ * 根据id修改菜品基本信息和对应的口味信息
+ *
+ * @param dishDTO
+ */
+void updateWithFlavor(DishDTO dishDTO);
 ```
-
-
 
 **3). Service层实现类**
 
 **在DishServiceImpl中实现updateWithFlavor方法：**
 
 ```java
-	/**
-     * 根据id修改菜品基本信息和对应的口味信息
-     *
-     * @param dishDTO
-     */
-    public void updateWithFlavor(DishDTO dishDTO) {
-        Dish dish = new Dish();
-        BeanUtils.copyProperties(dishDTO, dish);
+    /**
+ * 根据id修改菜品基本信息和对应的口味信息
+ *
+ * @param dishDTO
+ */
+public void updateWithFlavor(DishDTO dishDTO) {
+    Dish dish = new Dish();
+    BeanUtils.copyProperties(dishDTO, dish);
 
-        //修改菜品表基本信息
-        dishMapper.update(dish);
+    //修改菜品表基本信息
+    dishMapper.update(dish);
 
-        //删除原有的口味数据
-        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+    //删除原有的口味数据
+    dishFlavorMapper.deleteByDishId(dishDTO.getId());
 
-        //重新插入口味数据
-        List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors != null && flavors.size() > 0) {
-            flavors.forEach(dishFlavor -> {
-                dishFlavor.setDishId(dishDTO.getId());
-            });
-            //向口味表插入n条数据
-            dishFlavorMapper.insertBatch(flavors);
-        }
+    //重新插入口味数据
+    List<DishFlavor> flavors = dishDTO.getFlavors();
+    if (flavors != null && flavors.size() > 0) {
+        flavors.forEach(dishFlavor -> {
+            dishFlavor.setDishId(dishDTO.getId());
+        });
+        //向口味表插入n条数据
+        dishFlavorMapper.insertBatch(flavors);
     }
+}
 ```
-
-
 
 **4). Mapper层**
 
 **在DishMapper中，声明update方法：**
 
 ```java
-	/**
-     * 根据id动态修改菜品数据
-     *
-     * @param dish
-     */
-    @AutoFill(value = OperationType.UPDATE)
-    void update(Dish dish);
+    /**
+ * 根据id动态修改菜品数据
+ *
+ * @param dish
+ */
+@AutoFill(value = OperationType.UPDATE)
+void update(Dish dish);
 ```
 
 **并在DishMapper.xml文件中编写SQL:**
 
 ```xml
+
 <update id="update">
-        update dish
-        <set>
-            <if test="name != null">name = #{name},</if>
-            <if test="categoryId != null">category_id = #{categoryId},</if>
-            <if test="price != null">price = #{price},</if>
-            <if test="image != null">image = #{image},</if>
-            <if test="description != null">description = #{description},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="updateUser != null">update_user = #{updateUser},</if>
-        </set>
-        where id = #{id}
+    update dish
+    <set>
+        <if test="name != null">name = #{name},</if>
+        <if test="categoryId != null">category_id = #{categoryId},</if>
+        <if test="price != null">price = #{price},</if>
+        <if test="image != null">image = #{image},</if>
+        <if test="description != null">description = #{description},</if>
+        <if test="status != null">status = #{status},</if>
+        <if test="updateTime != null">update_time = #{updateTime},</if>
+        <if test="updateUser != null">update_user = #{updateUser},</if>
+    </set>
+    where id = #{id}
 </update>
 ```
-
-
 
 ### 5.3 功能测试
 
@@ -1772,8 +1671,6 @@ SetmealDishMapper.xml
 <img src="assets/image-20221122141456498.png" alt="image-20221122141456498" style="zoom:50%;" /> 
 
 修改成功
-
-
 
 ### 5.4 代码提交
 
