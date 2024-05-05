@@ -4,6 +4,8 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 
+import java.util.List;
+
 /**
  * @author Cheng-02
  * @version V1.0
@@ -17,4 +19,6 @@ public interface DishService {
 
 
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    void deleteBatch(List<Long> ids);
 }
